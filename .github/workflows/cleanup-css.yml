@@ -1,6 +1,8 @@
 name: Clean CSS
 
 on:
+  push:
+    branches: [cleanup-css]
   workflow_dispatch:
 
 permissions:
@@ -23,15 +25,10 @@ jobs:
           path = Path('style.css')
           css = path.read_text(encoding='utf-8')
 
-          # Remove comments only; CSS comments do not affect rendering.
-          css = re.sub(r'/\\*.*?\\*/', '', css, flags=re.S)
-
-          # Remove the exact duplicate cursor declarations left by earlier edits.
+          css = re.sub(r'/\*.*?\*/', '', css, flags=re.S)
           css = css.replace('''body {\n  cursor: none;\n}\nbutton,\na,\ninput,\ntextarea,\nselect {\n  cursor: none;\n}\n''', '')
-
-          # Collapse excessive blank lines without changing declarations/order.
-          css = re.sub(r'\\n[ \\t]*\\n[ \\t]*\\n+', '\\n\\n', css)
-          css = css.strip() + '\\n'
+          css = re.sub(r'\n[ \t]*\n[ \t]*\n+', '\n\n', css)
+          css = css.strip() + '\n'
 
           path.write_text(css, encoding='utf-8')
           PY

@@ -6,6 +6,7 @@ const TMDB_BACKDROP_URL = "https://image.tmdb.org/t/p/w1280";
 const ARCHIVE_STORAGE_KEY = "afterDarkArchive";
 const USER_STORAGE_KEY = "afterDarkUser";
 const body = document.body;
+const cursor = document.querySelector(".cursor");
 const indexPanel = document.querySelector(".index-panel");
 const indexTrigger = document.querySelector(".index-trigger");
 const indexClose = document.querySelector(".index-close");

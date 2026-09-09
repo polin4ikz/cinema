@@ -13,7 +13,6 @@
 :root {
   --black: #080706;
   --black-soft: #100e0d;
-  --black-light: #171311;
   --milk: #e8ddc8;
   --milk-soft: #d8ccb7;
   --red: #791522;
@@ -68,9 +67,6 @@ a {
 }
 img {
   max-width: 100%;
-}
-body {
-  cursor: none;
 }
 button,
 a,
@@ -1694,7 +1690,6 @@ select {
   );
   opacity: 1;
   visibility: visible;
-  pointer-events: auto;
   transition:
     opacity 0.45s ease,
     visibility 0.45s ease;
@@ -2437,9 +2432,6 @@ select {
 .movie-night-reveal-track::before,
 .movie-night-final-poster::before,
 .movie-night-final-poster::after {
-  pointer-events: none !important;
-}
-.hero-red {
   pointer-events: none !important;
 }
 /* FIX — rating row hover */

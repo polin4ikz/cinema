@@ -9,7 +9,6 @@ const body = document.body;
 const indexPanel = document.querySelector(".index-panel");
 const indexTrigger = document.querySelector(".index-trigger");
 const indexClose = document.querySelector(".index-close");
-const cursor = document.querySelector(".cursor");
 const archiveTrack = document.getElementById("archiveTrack");
 const archiveTrackWrap = document.querySelector(".archive-track-wrap");
 const visibleCount = document.getElementById("visibleCount");
@@ -75,11 +74,6 @@ let archiveCurrentIndex = 0;
 let archiveScrollFrame = null;
 let archiveSnapTimer = null;
 let resizeTimer = null;
-/*
-   IMPORTANT:
-   Drag state is completely separated from click state.
-   This prevents archive buttons from becoming unclickable.
-*/
 const archiveDragState = {
   active: false,
   moved: false,
@@ -314,8 +308,7 @@ function filmIsInArchive(tmdbId) {
   return films.some((film) => Number(film.tmdbId) === Number(tmdbId));
 }
 function initCustomCursor() {
-  const cursor = document.querySelector(".cursor");
-  if (!cursor) return;
+    if (!cursor) return;
   cursor.style.pointerEvents = "none";
   cursor.setAttribute("aria-hidden", "true");
   let mouseX = window.innerWidth / 2;
@@ -576,10 +569,6 @@ document.querySelectorAll(".archive-section .filter").forEach((button) => {
   });
 });
 archiveTrack?.addEventListener("click", (event) => {
-  /*
-       If the pointer actually dragged the carousel,
-       do not treat the release as a click.
-    */
   if (archiveDragState.moved) {
     return;
   }
@@ -594,14 +583,12 @@ archiveTrack?.addEventListener("click", (event) => {
     return;
   }
   const action = actionElement?.dataset.action;
-  /* REMOVE */
   if (action === "remove") {
     event.preventDefault();
     event.stopPropagation();
     removeFilm(film.id);
     return;
   }
-  /* RATE */
   if (action === "rate") {
     event.preventDefault();
     event.stopPropagation();
@@ -610,7 +597,6 @@ archiveTrack?.addEventListener("click", (event) => {
     });
     return;
   }
-  /* WATCH */
   if (action === "watch") {
     event.preventDefault();
     event.stopPropagation();
@@ -620,10 +606,6 @@ archiveTrack?.addEventListener("click", (event) => {
     openFilmModal(film);
     return;
   }
-  /*
-       Clicking anywhere else on the card
-       opens the film modal.
-    */
   openFilmModal(film);
 });
 function removeFilm(id) {
@@ -799,18 +781,6 @@ function snapArchiveToClosest() {
     inline: "center",
   });
 }
-/*
-   THIS IS THE IMPORTANT FIX.
-   The old version started drag whenever pointerdown happened
-   inside the archive.
-   That meant clicking:
-   - START WATCHING
-   - RATE
-   - REMOVE
-   could be interpreted as carousel dragging.
-   Now drag starts ONLY when the user presses the actual
-   carousel background/card area — NOT interactive controls.
-*/
 archiveTrack?.addEventListener("pointerdown", (event) => {
   if (event.button !== 0 || !archiveTrack) {
     return;
@@ -818,9 +788,6 @@ archiveTrack?.addEventListener("pointerdown", (event) => {
   const interactive = event.target.closest(
     "button, a, input, select, textarea",
   );
-  /*
-       Never start carousel drag from buttons.
-    */
   if (interactive) {
     return;
   }
@@ -833,7 +800,6 @@ archiveTrack?.addEventListener("pointerdown", (event) => {
   try {
     archiveTrack.setPointerCapture(event.pointerId);
   } catch (error) {
-    /* Pointer capture is optional */
   }
 });
 archiveTrack?.addEventListener("pointermove", (event) => {
@@ -860,14 +826,9 @@ function endArchiveDrag(event) {
       archiveTrack.releasePointerCapture(archiveDragState.pointerId);
     }
   } catch (error) {
-    /* Ignore pointer capture errors */
   }
   const wasMoved = archiveDragState.moved;
   archiveDragState.pointerId = null;
-  /*
-     Keep moved=true briefly so the click event generated
-     immediately after pointerup cannot open a film.
-  */
   if (wasMoved) {
     setTimeout(() => {
       archiveDragState.moved = false;
@@ -879,11 +840,6 @@ function endArchiveDrag(event) {
 }
 archiveTrack?.addEventListener("pointerup", endArchiveDrag);
 archiveTrack?.addEventListener("pointercancel", endArchiveDrag);
-/*
-   DO NOT end drag simply because pointerleave happens.
-   With pointer capture enabled, pointerleave can occur while
-   the user is still dragging.
-*/
 archiveTrack?.addEventListener("keydown", (event) => {
   if (event.key === "ArrowRight") {
     event.preventDefault();
@@ -1068,9 +1024,6 @@ searchInput?.addEventListener("keydown", (event) => {
 });
 searchResults?.addEventListener("click", async (event) => {
   const addButton = event.target.closest("[data-add-tmdb]");
-  /*
-       ADD BUTTON
-    */
   if (addButton) {
     event.preventDefault();
     event.stopPropagation();
@@ -1087,9 +1040,6 @@ searchResults?.addEventListener("click", async (event) => {
     }
     return;
   }
-  /*
-       OPEN SEARCH RESULT
-    */
   const result = event.target.closest(".search-result");
   if (!result) {
     return;
@@ -1366,7 +1316,6 @@ function openMovieNightModal() {
   resetMovieNightModal();
   movieNightModal.classList.add("active", "is-selecting");
   movieNightModal.setAttribute("aria-hidden", "false");
-  // Reveal включается только после открытия Movie Night
   if (movieNightReveal) {
     movieNightReveal.style.setProperty("pointer-events", "auto", "important");
   }
@@ -1378,13 +1327,11 @@ function closeMovieNightModal() {
     movieNightController.abort();
     movieNightController = null;
   }
-  // Полностью убираем reveal со страницы после закрытия
   if (movieNightReveal) {
     movieNightReveal.style.setProperty("pointer-events", "none", "important");
   }
   movieNightModal.classList.remove("active", "is-selecting", "is-result");
   movieNightModal.setAttribute("aria-hidden", "true");
-  // Убираем фокус с элемента внутри закрытой модалки
   if (
     movieNightModal.contains(document.activeElement) &&
     typeof document.activeElement.blur === "function"
@@ -1816,8 +1763,7 @@ async function chooseMovieNightFilm() {
   const signal = movieNightController.signal;
   const animation = createMovieNightSearchAnimation();
   try {
-    const poolPromise = getMovieNightPool(signal);
-    const pool = await poolPromise;
+    const pool = await getMovieNightPool(signal);
     if (signal.aborted) {
       animation.stop();
       return;
@@ -1856,7 +1802,6 @@ async function chooseMovieNightFilm() {
     if (signal.aborted) {
       return;
     }
-    currentMovieNightFilm = film;
     showMovieNightResult(film);
   } catch (error) {
     if (error.name === "AbortError") {

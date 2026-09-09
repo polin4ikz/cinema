@@ -1,0 +1,58 @@
+name: Clean CSS
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: cleanup-css
+
+      - name: Clean style.css
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('style.css')
+          css = path.read_text(encoding='utf-8')
+
+          # Remove comments only; CSS comments do not affect rendering.
+          css = re.sub(r'/\\*.*?\\*/', '', css, flags=re.S)
+
+          # Remove the exact duplicate cursor declarations left by earlier edits.
+          css = css.replace('''body {\n  cursor: none;\n}\nbutton,\na,\ninput,\ntextarea,\nselect {\n  cursor: none;\n}\n''', '')
+
+          # Collapse excessive blank lines without changing declarations/order.
+          css = re.sub(r'\\n[ \\t]*\\n[ \\t]*\\n+', '\\n\\n', css)
+          css = css.strip() + '\\n'
+
+          path.write_text(css, encoding='utf-8')
+          PY
+
+      - name: Commit cleaned CSS
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add style.css
+          if git diff --cached --quiet; then
+            echo 'No CSS changes needed.'
+            exit 0
+          fi
+          git commit -m 'Clean style.css [cleanup-done]'
+          git push origin cleanup-css
+
+      - name: Remove temporary workflow
+        if: always()
+        run: |
+          git rm -f .github/workflows/cleanup-css.yml || true
+          if ! git diff --cached --quiet; then
+            git commit -m 'Remove temporary CSS cleanup workflow [cleanup-done]'
+            git push origin cleanup-css
+          fi

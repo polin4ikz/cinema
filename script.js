@@ -1,23 +1,10 @@
-/* =========================================================
-   AFTER DARK — CINEMA ARCHIVE
-   COMPLETE JAVASCRIPT
-========================================================= */
-/* =========================================================
-   TMDB
-========================================================= */
 const TMDB_API_KEY =
   "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmMTZiYTQ0NDRjYWQ4ODdjZGY0ZDE1Yjk3MGZlNjlhYSIsIm5iZiI6MTc4NjY1NjM4NS43MDcsInN1YiI6IjZhN2UzNjgxMDYxNjdmYTY2ZmM3YWI2MCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.WLWycZ1zW98G_x0bs90UHsFljmrwpPKoPvZBrP9ho2o";
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 const TMDB_IMAGE_URL = "https://image.tmdb.org/t/p/w780";
 const TMDB_BACKDROP_URL = "https://image.tmdb.org/t/p/w1280";
-/* =========================================================
-   STORAGE
-========================================================= */
 const ARCHIVE_STORAGE_KEY = "afterDarkArchive";
 const USER_STORAGE_KEY = "afterDarkUser";
-/* =========================================================
-   DOM
-========================================================= */
 const body = document.body;
 const indexPanel = document.querySelector(".index-panel");
 const indexTrigger = document.querySelector(".index-trigger");
@@ -69,9 +56,6 @@ const authButton = document.getElementById("authButton");
 const authClose = document.getElementById("authClose");
 const authForm = document.getElementById("authForm");
 const authName = document.getElementById("authName");
-/* =========================================================
-   STATE
-========================================================= */
 let films = loadArchive();
 let currentArchiveType = "all";
 let selectedMovieType = "all";
@@ -103,9 +87,6 @@ const archiveDragState = {
   startScrollLeft: 0,
   pointerId: null,
 };
-/* =========================================================
-   SAMPLE RATINGS
-========================================================= */
 let ratings = [
   {
     id: 1,
@@ -153,9 +134,6 @@ let ratings = [
     date: "2026-07-21",
   },
 ];
-/* =========================================================
-   TMDB GENRES
-========================================================= */
 const TMDB_GENRES = {
   28: "ACTION",
   12: "ADVENTURE",
@@ -185,9 +163,6 @@ const TMDB_GENRES = {
   10767: "TALK",
   10768: "WAR & POLITICS",
 };
-/* =========================================================
-   COUNTRIES
-========================================================= */
 const MOVIE_NIGHT_COUNTRIES = {
   US: "USA",
   GB: "UK",
@@ -225,9 +200,6 @@ const MOVIE_NIGHT_COUNTRIES = {
   IR: "IRAN",
   IL: "ISRAEL",
 };
-/* =========================================================
-   STORAGE
-========================================================= */
 function loadArchive() {
   try {
     const saved = localStorage.getItem(ARCHIVE_STORAGE_KEY);
@@ -248,9 +220,6 @@ function saveArchive() {
     console.error("Archive saving error:", error);
   }
 }
-/* =========================================================
-   HELPERS
-========================================================= */
 function escapeHTML(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -344,9 +313,6 @@ function getFilmCountry(film) {
 function filmIsInArchive(tmdbId) {
   return films.some((film) => Number(film.tmdbId) === Number(tmdbId));
 }
-// =========================
-// CUSTOM CURSOR
-// =========================
 function initCustomCursor() {
   const cursor = document.querySelector(".cursor");
   if (!cursor) return;
@@ -414,9 +380,6 @@ function initCustomCursor() {
   }
   animateCursor();
 }
-/* =========================================================
-   INDEX
-========================================================= */
 function openIndex() {
   if (!indexPanel) {
     return;
@@ -436,9 +399,6 @@ indexClose?.addEventListener("click", closeIndex);
 document.querySelectorAll(".index-nav a").forEach((link) => {
   link.addEventListener("click", closeIndex);
 });
-/* =========================================================
-   ARCHIVE CAROUSEL UI
-========================================================= */
 function createArchiveControls() {
   if (!archiveTrackWrap) {
     return;
@@ -489,9 +449,6 @@ function createArchiveControls() {
     scrollArchive(button.dataset.carousel === "next" ? 1 : -1);
   });
 }
-/* =========================================================
-   ARCHIVE COUNTERS
-========================================================= */
 function updateArchiveCounter() {
   const visibleFilms = getVisibleArchiveFilms();
   const visible = visibleFilms.length;
@@ -506,9 +463,6 @@ function updateArchiveCounter() {
     archiveCount.textContent = total;
   }
 }
-/* =========================================================
-   RENDER ARCHIVE
-========================================================= */
 function renderArchive() {
   if (!archiveTrack) {
     return;
@@ -611,9 +565,6 @@ function renderArchive() {
     updateArchiveNavigation();
   });
 }
-/* =========================================================
-   ARCHIVE FILTERS
-========================================================= */
 document.querySelectorAll(".archive-section .filter").forEach((button) => {
   button.addEventListener("click", () => {
     document
@@ -624,9 +575,6 @@ document.querySelectorAll(".archive-section .filter").forEach((button) => {
     renderArchive();
   });
 });
-/* =========================================================
-   ARCHIVE CARD ACTIONS
-========================================================= */
 archiveTrack?.addEventListener("click", (event) => {
   /*
        If the pointer actually dragged the carousel,
@@ -678,26 +626,17 @@ archiveTrack?.addEventListener("click", (event) => {
     */
   openFilmModal(film);
 });
-/* =========================================================
-   REMOVE FILM
-========================================================= */
 function removeFilm(id) {
   films = films.filter((film) => String(film.id) !== String(id));
   saveArchive();
   renderArchive();
 }
-/* =========================================================
-   ARCHIVE CARDS
-========================================================= */
 function getArchiveCards() {
   if (!archiveTrack) {
     return [];
   }
   return [...archiveTrack.querySelectorAll(".archive-card")];
 }
-/* =========================================================
-   CAROUSEL FOCUS
-========================================================= */
 function updateArchiveFocus() {
   if (!archiveTrack) {
     return;
@@ -736,9 +675,6 @@ function updateArchiveFocus() {
   archiveCurrentIndex = closestIndex;
   updateArchiveNavigation();
 }
-/* =========================================================
-   CAROUSEL NAVIGATION
-========================================================= */
 function scrollArchive(direction) {
   if (!archiveTrack) {
     return;
@@ -760,9 +696,6 @@ function scrollArchive(direction) {
   archiveCurrentIndex = next;
   updateArchiveNavigation();
 }
-/* =========================================================
-   CAROUSEL UI
-========================================================= */
 function updateArchiveNavigation() {
   if (!archiveTrackWrap) {
     return;
@@ -812,9 +745,6 @@ function updateArchiveNavigation() {
     next.disabled = index >= cards.length - 1;
   }
 }
-/* =========================================================
-   CAROUSEL SCROLL
-========================================================= */
 archiveTrack?.addEventListener(
   "scroll",
   () => {
@@ -836,9 +766,6 @@ archiveTrack?.addEventListener(
     passive: true,
   },
 );
-/* =========================================================
-   SNAP
-========================================================= */
 function snapArchiveToClosest() {
   if (!archiveTrack) {
     return;
@@ -872,9 +799,6 @@ function snapArchiveToClosest() {
     inline: "center",
   });
 }
-/* =========================================================
-   DRAG TO SCROLL
-========================================================= */
 /*
    THIS IS THE IMPORTANT FIX.
    The old version started drag whenever pointerdown happened
@@ -912,9 +836,6 @@ archiveTrack?.addEventListener("pointerdown", (event) => {
     /* Pointer capture is optional */
   }
 });
-/* =========================================================
-   DRAG MOVE
-========================================================= */
 archiveTrack?.addEventListener("pointermove", (event) => {
   if (!archiveDragState.active) {
     return;
@@ -925,9 +846,6 @@ archiveTrack?.addEventListener("pointermove", (event) => {
   }
   archiveTrack.scrollLeft = archiveDragState.startScrollLeft - delta * 1.15;
 });
-/* =========================================================
-   END DRAG
-========================================================= */
 function endArchiveDrag(event) {
   if (!archiveDragState.active) {
     return;
@@ -966,9 +884,6 @@ archiveTrack?.addEventListener("pointercancel", endArchiveDrag);
    With pointer capture enabled, pointerleave can occur while
    the user is still dragging.
 */
-/* =========================================================
-   KEYBOARD CAROUSEL
-========================================================= */
 archiveTrack?.addEventListener("keydown", (event) => {
   if (event.key === "ArrowRight") {
     event.preventDefault();
@@ -979,9 +894,6 @@ archiveTrack?.addEventListener("keydown", (event) => {
     scrollArchive(-1);
   }
 });
-/* =========================================================
-   SEARCH COUNT
-========================================================= */
 function setSearchCountMode(hasResults) {
   const label = document.querySelector(".search-info span:first-child");
   if (!label) {
@@ -996,9 +908,6 @@ function setSearchCountMode(hasResults) {
     text.textContent = hasResults ? " RESULTS" : " TITLES";
   }
 }
-/* =========================================================
-   SEARCH TMDB
-========================================================= */
 async function searchTMDB(query) {
   if (!query.trim()) {
     if (searchResults) {
@@ -1060,9 +969,6 @@ async function searchTMDB(query) {
     }
   }
 }
-/* =========================================================
-   SEARCH RESULTS RENDER
-========================================================= */
 function renderSearchResults(results) {
   if (!searchResults) {
     return;
@@ -1144,9 +1050,6 @@ function renderSearchResults(results) {
     })
     .join("");
 }
-/* =========================================================
-   SEARCH INPUT
-========================================================= */
 searchInput?.addEventListener("input", () => {
   clearTimeout(searchTimer);
   const value = searchInput.value.trim();
@@ -1163,9 +1066,6 @@ searchInput?.addEventListener("keydown", (event) => {
     searchTMDB(searchInput.value);
   }
 });
-/* =========================================================
-   SEARCH RESULT ACTIONS
-========================================================= */
 searchResults?.addEventListener("click", async (event) => {
   const addButton = event.target.closest("[data-add-tmdb]");
   /*
@@ -1203,9 +1103,6 @@ searchResults?.addEventListener("click", async (event) => {
     openFilmModal(film);
   }
 });
-/* =========================================================
-   CLOSE SEARCH OUTSIDE
-========================================================= */
 document.addEventListener("click", (event) => {
   if (!searchResults?.classList.contains("has-results")) {
     return;
@@ -1221,9 +1118,6 @@ document.addEventListener("click", (event) => {
   searchResults.classList.remove("has-results");
   setSearchCountMode(false);
 });
-/* =========================================================
-   FETCH TMDB DETAIL
-========================================================= */
 async function fetchTMDBFilm(tmdbId, mediaType = "movie", signal = undefined) {
   try {
     const response = await fetch(
@@ -1248,9 +1142,6 @@ async function fetchTMDBFilm(tmdbId, mediaType = "movie", signal = undefined) {
     return null;
   }
 }
-/* =========================================================
-   NORMALIZE TMDB FILM
-========================================================= */
 function normalizeTMDBFilm(data) {
   const mediaType = data.media_type || (data.first_air_date ? "tv" : "movie");
   const crew = data.credits?.crew || [];
@@ -1314,9 +1205,6 @@ function normalizeTMDBFilm(data) {
     adult: Boolean(data.adult),
   };
 }
-/* =========================================================
-   ADD TMDB TO ARCHIVE
-========================================================= */
 async function addTMDBToArchive(tmdbId, mediaType = "movie") {
   const existing = films.find((film) => Number(film.tmdbId) === Number(tmdbId));
   if (existing) {
@@ -1331,9 +1219,6 @@ async function addTMDBToArchive(tmdbId, mediaType = "movie") {
   renderArchive();
   return film;
 }
-/* =========================================================
-   FILM MODAL
-========================================================= */
 function openFilmModal(film) {
   if (!filmModal) {
     return;
@@ -1385,66 +1270,42 @@ filmModal?.addEventListener("click", (event) => {
     closeFilmModal();
   }
 });
-/* =========================================================
-   MOVIE NIGHT FILTERS
-========================================================= */
 function resetMovieNightSelection(selector, activeButton) {
   document
     .querySelectorAll(selector)
     .forEach((button) => button.classList.remove("active"));
   activeButton?.classList.add("active");
 }
-/* =========================================================
-   MOVIE NIGHT TYPE
-========================================================= */
 document.querySelectorAll("[data-filter-type]").forEach((button) => {
   button.addEventListener("click", () => {
     resetMovieNightSelection("[data-filter-type]", button);
     selectedMovieType = button.dataset.filterType || "all";
   });
 });
-/* =========================================================
-   MOVIE NIGHT GENRE
-========================================================= */
 document.querySelectorAll("[data-genre]").forEach((button) => {
   button.addEventListener("click", () => {
     resetMovieNightSelection("[data-genre]", button);
     selectedMovieGenre = button.dataset.genre || "any";
   });
 });
-/* =========================================================
-   MOVIE NIGHT YEAR
-========================================================= */
 document.querySelectorAll("[data-year]").forEach((button) => {
   button.addEventListener("click", () => {
     resetMovieNightSelection("[data-year]", button);
     selectedMovieYear = button.dataset.year || "any";
   });
 });
-/* =========================================================
-   MOVIE NIGHT COUNTRY
-========================================================= */
 movieNightCountrySelect?.addEventListener("change", () => {
   selectedMovieCountry = movieNightCountrySelect.value || "any";
 });
-/* =========================================================
-   MOVIE NIGHT RATING
-========================================================= */
 document.querySelectorAll("[data-rating]").forEach((button) => {
   button.addEventListener("click", () => {
     resetMovieNightSelection("[data-rating]", button);
     selectedMovieRating = Number(button.dataset.rating || 0);
   });
 });
-/* =========================================================
-   EXCLUDE ARCHIVE
-========================================================= */
 excludeArchiveControl?.addEventListener("change", () => {
   excludeArchive = Boolean(excludeArchiveControl.checked);
 });
-/* =========================================================
-   MOVIE NIGHT REVEAL STATUS
-========================================================= */
 function setMovieNightRevealStatus(status) {
   if (!movieNightRevealTrack) {
     return;
@@ -1456,9 +1317,6 @@ function setMovieNightRevealStatus(status) {
   }
   span.textContent = status;
 }
-/* =========================================================
-   MOVIE NIGHT MODAL RESET
-========================================================= */
 function resetMovieNightModal() {
   if (!movieNightModal) {
     return;
@@ -1503,9 +1361,6 @@ function resetMovieNightModal() {
   }
   setMovieNightRevealStatus("---");
 }
-/* =========================================================
-   OPEN MOVIE NIGHT MODAL
-========================================================= */
 function openMovieNightModal() {
   if (!movieNightModal) return;
   resetMovieNightModal();
@@ -1517,9 +1372,6 @@ function openMovieNightModal() {
   }
   body.classList.add("movie-night-modal-open");
 }
-/* =========================================================
-   CLOSE MOVIE NIGHT MODAL
-========================================================= */
 function closeMovieNightModal() {
   if (!movieNightModal) return;
   if (movieNightController) {
@@ -1550,9 +1402,6 @@ function closeMovieNightModal() {
 }
 movieNightModalClose?.addEventListener("click", closeMovieNightModal);
 movieNightModalBackdrop?.addEventListener("click", closeMovieNightModal);
-/* =========================================================
-   MOVIE NIGHT SEARCH ANIMATION
-========================================================= */
 function createMovieNightSearchAnimation() {
   const startTime = performance.now();
   let finished = false;
@@ -1613,9 +1462,6 @@ function createMovieNightSearchAnimation() {
     stop,
   };
 }
-/* =========================================================
-   MOVIE NIGHT YEAR FILTER
-========================================================= */
 function applyMovieNightYearFilter(params, endpointType) {
   const prefix =
     endpointType === "tv" ? "first_air_date" : "primary_release_date";
@@ -1640,9 +1486,6 @@ function applyMovieNightYearFilter(params, endpointType) {
       break;
   }
 }
-/* =========================================================
-   MOVIE NIGHT GENRES
-========================================================= */
 function getMovieNightGenreIds() {
   if (selectedMovieGenre === "any") {
     return null;
@@ -1670,9 +1513,6 @@ function getMovieNightGenreIds() {
   };
   return map[String(selectedMovieGenre).toLowerCase()] || null;
 }
-/* =========================================================
-   MOVIE NIGHT PARAMETERS
-========================================================= */
 function buildMovieNightParams(page, endpointType) {
   const params = new URLSearchParams();
   params.set("language", "ru-RU");
@@ -1700,9 +1540,6 @@ function buildMovieNightParams(page, endpointType) {
   }
   return params;
 }
-/* =========================================================
-   MOVIE NIGHT ENDPOINTS
-========================================================= */
 function getMovieNightEndpoints() {
   switch (selectedMovieType) {
     case "series":
@@ -1715,9 +1552,6 @@ function getMovieNightEndpoints() {
       return ["movie", "tv"];
   }
 }
-/* =========================================================
-   MOVIE NIGHT DISCOVER
-========================================================= */
 async function fetchMovieNightDiscover(page, endpointType, signal) {
   const params = buildMovieNightParams(page, endpointType);
   const response = await fetch(
@@ -1739,9 +1573,6 @@ async function fetchMovieNightDiscover(page, endpointType, signal) {
     endpointType,
   };
 }
-/* =========================================================
-   MOVIE NIGHT LOCAL FILTERS
-========================================================= */
 function matchesMovieNightGenre(item) {
   if (selectedMovieGenre === "any") {
     return true;
@@ -1811,9 +1642,6 @@ function matchesMovieNightRating(item) {
   }
   return Number(item.vote_average || 0) >= Number(selectedMovieRating);
 }
-/* =========================================================
-   MOVIE NIGHT POOL
-========================================================= */
 async function getMovieNightPool(signal) {
   const endpoints = getMovieNightEndpoints();
   const allResults = [];
@@ -1849,18 +1677,12 @@ async function getMovieNightPool(signal) {
   pool = pool.filter((item) => Boolean(item.title || item.name));
   return pool;
 }
-/* =========================================================
-   RANDOM
-========================================================= */
 function chooseRandomFromPool(pool) {
   if (!pool.length) {
     return null;
   }
   return pool[Math.floor(Math.random() * pool.length)];
 }
-/* =========================================================
-   MOVIE NIGHT RESULT
-========================================================= */
 function populateMovieNightResult(film) {
   if (!film) {
     return;
@@ -1915,9 +1737,6 @@ function populateMovieNightResult(film) {
     movieNightOpen.style.display = "";
   }
 }
-/* =========================================================
-   SHOW MOVIE NIGHT RESULT
-========================================================= */
 function showMovieNightResult(film) {
   if (!film || !movieNightModal) {
     return;
@@ -1933,9 +1752,6 @@ function showMovieNightResult(film) {
     movieNightFinal?.classList.add("visible");
   });
 }
-/* =========================================================
-   MOVIE NIGHT ERROR
-========================================================= */
 function showMovieNightError(message) {
   if (!movieNightModal) {
     return;
@@ -1982,9 +1798,6 @@ function showMovieNightError(message) {
     movieNightFinal?.classList.add("visible");
   });
 }
-/* =========================================================
-   MOVIE NIGHT — MAIN
-========================================================= */
 async function chooseMovieNightFilm() {
   if (movieNightBusy || !decideButton) {
     return;
@@ -2070,9 +1883,6 @@ async function chooseMovieNightFilm() {
   }
 }
 decideButton?.addEventListener("click", chooseMovieNightFilm);
-/* =========================================================
-   MOVIE NIGHT — OPEN RESULT
-========================================================= */
 movieNightOpen?.addEventListener("click", () => {
   if (!currentMovieNightFilm) {
     return;
@@ -2083,9 +1893,6 @@ movieNightOpen?.addEventListener("click", () => {
     openFilmModal(film);
   }, 180);
 });
-/* =========================================================
-   MOVIE NIGHT — ADD TO ARCHIVE
-========================================================= */
 movieNightAdd?.addEventListener("click", async () => {
   if (!currentMovieNightFilm || movieNightAdd.disabled) {
     return;
@@ -2103,9 +1910,6 @@ movieNightAdd?.addEventListener("click", async () => {
     movieNightArchiveStatus.classList.add("in-archive");
   }
 });
-/* =========================================================
-   RATINGS
-========================================================= */
 function getRatingAverage(rating) {
   return (Number(rating.polina) + Number(rating.nastya)) / 2;
 }
@@ -2177,9 +1981,6 @@ function renderRatings() {
     })
     .join("");
 }
-/* =========================================================
-   RATING FILTERS
-========================================================= */
 document.querySelectorAll(".rating-filter").forEach((button) => {
   button.addEventListener("click", () => {
     document
@@ -2190,9 +1991,6 @@ document.querySelectorAll(".rating-filter").forEach((button) => {
     renderRatings();
   });
 });
-/* =========================================================
-   RATING SORT
-========================================================= */
 document.querySelectorAll(".sort-button").forEach((button) => {
   button.addEventListener("click", () => {
     document
@@ -2203,9 +2001,6 @@ document.querySelectorAll(".sort-button").forEach((button) => {
     renderRatings();
   });
 });
-/* =========================================================
-   AUTH
-========================================================= */
 function updateAuthButton() {
   if (!authButton) {
     return;
@@ -2224,15 +2019,9 @@ function updateAuthButton() {
   }
   authButton.textContent = "LOG IN / REGISTER";
 }
-/* =========================================================
-   AUTH OPEN
-========================================================= */
 authButton?.addEventListener("click", () => {
   authModal?.classList.add("active");
 });
-/* =========================================================
-   AUTH CLOSE
-========================================================= */
 authClose?.addEventListener("click", () => {
   authModal?.classList.remove("active");
 });
@@ -2241,9 +2030,6 @@ authModal?.addEventListener("click", (event) => {
     authModal.classList.remove("active");
   }
 });
-/* =========================================================
-   AUTH TABS
-========================================================= */
 document.querySelectorAll(".auth-tab").forEach((tab) => {
   tab.addEventListener("click", () => {
     document
@@ -2252,9 +2038,6 @@ document.querySelectorAll(".auth-tab").forEach((tab) => {
     tab.classList.add("active");
   });
 });
-/* =========================================================
-   AUTH FORM
-========================================================= */
 authForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   const name = authName?.value.trim();
@@ -2271,9 +2054,6 @@ authForm?.addEventListener("submit", (event) => {
   authModal?.classList.remove("active");
   authForm.reset();
 });
-/* =========================================================
-   ESCAPE
-========================================================= */
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") {
     return;
@@ -2283,9 +2063,6 @@ document.addEventListener("keydown", (event) => {
   closeMovieNightModal();
   authModal?.classList.remove("active");
 });
-/* =========================================================
-   RESIZE
-========================================================= */
 window.addEventListener("resize", () => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
@@ -2293,9 +2070,6 @@ window.addEventListener("resize", () => {
     updateArchiveNavigation();
   }, 120);
 });
-/* =========================================================
-   INIT
-========================================================= */
 initCustomCursor();
 createArchiveControls();
 renderArchive();

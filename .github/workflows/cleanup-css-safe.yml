@@ -1,0 +1,60 @@
+name: Safe CSS cleanup
+
+on:
+  push:
+    paths:
+      - '.github/workflows/cleanup-css-safe.yml'
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clean redundant CSS overrides
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('style.css')
+          s = p.read_text(encoding='utf-8')
+
+          old = '''button {\n  border: 0;\n  cursor: none;\n}\n'''
+          new = '''button {\n  border: 0;\n}\n'''
+          assert s.count(old) == 1, f'button block count: {s.count(old)}'
+          s = s.replace(old, new, 1)
+
+          old = '''.movie-night .decide-button.is-loading {\n  pointer-events: none;\n}\n'''
+          new = '''.movie-night .decide-button.is-loading {\n  pointer-events: none;\n  color: var(--red);\n}\n'''
+          assert s.count(old) == 1, f'loading block count: {s.count(old)}'
+          s = s.replace(old, new, 1)
+
+          old = '''.movie-night .decide-button.is-loading {\n  color: var(--red);\n}\n'''
+          assert s.count(old) == 1, f'redundant loading block count: {s.count(old)}'
+          s = s.replace(old, '', 1)
+
+          old = '''.rating-row:hover {\n  padding-left: 15px;\n  background: rgba(121, 21, 34, 0.13);\n}\n'''
+          assert s.count(old) == 1, f'rating hover block count: {s.count(old)}'
+          s = s.replace(old, '', 1)
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit cleaned CSS
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add style.css
+          git commit -m 'Remove redundant CSS overrides' || exit 0
+          git push
+
+      - name: Remove temporary workflow
+        if: always()
+        run: |
+          rm -f .github/workflows/cleanup-css-safe.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/cleanup-css-safe.yml
+          git commit -m 'Remove temporary CSS cleanup workflow' || exit 0
+          git push

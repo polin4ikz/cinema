@@ -59,7 +59,6 @@ select {
 }
 button {
   border: 0;
-  cursor: none;
 }
 a {
   color: inherit;
@@ -1549,12 +1548,10 @@ select {
 }
 .movie-night .decide-button.is-loading {
   pointer-events: none;
+  color: var(--red);
 }
 .movie-night .decide-button.is-loading::before {
   transform: translateX(0);
-}
-.movie-night .decide-button.is-loading {
-  color: var(--red);
 }
 .movie-night .decide-button:disabled {
   opacity: 0.85;
@@ -2183,10 +2180,6 @@ select {
   transition:
     background 0.35s ease,
     padding 0.35s var(--ease);
-}
-.rating-row:hover {
-  padding-left: 15px;
-  background: rgba(121, 21, 34, 0.13);
 }
 .rating-index {
   color: var(--red-bright);

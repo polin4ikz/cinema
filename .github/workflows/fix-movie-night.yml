@@ -1,0 +1,35 @@
+name: Fix Movie Night query
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: ${{ !contains(github.event.head_commit.message, '[movie-night-fix]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix TMDB discover parameter
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('script.js')
+          s = p.read_text(encoding='utf-8')
+          old = 'vote_count_gte:20'
+          new = '"vote_count.gte":20'
+          if old not in s:
+              raise SystemExit('Expected Movie Night parameter was not found')
+          p.write_text(s.replace(old, new), encoding='utf-8')
+          PY
+      - name: Commit fix and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add script.js
+          git rm .github/workflows/fix-movie-night.yml
+          git commit -m "fix: correct TMDB Movie Night vote count parameter [movie-night-fix]"
+          git push
